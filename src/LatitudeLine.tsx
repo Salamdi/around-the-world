@@ -1,27 +1,29 @@
 import React, { useContext, useState } from 'react';
 import Circle from './Circle';
-import state from './state';
 import { useFrame } from '@react-three/fiber';
+import state from './state';
 
-const Equator = () => {
+const latitudeLine = () => {
   const step = useContext(state);
-  const [arc, setArc] = useState(0);
+  const [y, setY] = useState(0);
+  const [radius, setRadius] = useState(2.51);
 
   useFrame((_, delta) => {
     switch (step) {
       case 'dayNight':
       case 'day':
-        break;
       case 'equatorLine':
-        if (arc >= 2 * Math.PI) {
+      case 'speedCalculation':
+        break;
+      case 'latitude':
+        if (radius <= 1.255) {
           return;
         }
-        setArc(arc + delta);
+        setRadius(radius - delta);
+        setY(Math.sqrt(2.51 ** 2 - radius ** 2));
         break;
       case 'halfSpeed':
-      case 'latitude':
       case 'latitudeLength':
-      case 'speedCalculation':
         break;
       default:
         const _impossible: never = step;
@@ -31,27 +33,22 @@ const Equator = () => {
 
   let lineWidth = 2;
   let opacity = 1;
+
   switch (step) {
     case 'latitudeLength':
       lineWidth = 0.3;
       opacity = 0.5;
       break;
-    case 'latitude':
-    case 'halfSpeed':
-    case 'dayNight':
-      lineWidth = 0;
-      break;
   }
-
   return (
     <Circle
-      radius={2.51}
+      position={[0, y, 0]}
+      radius={radius}
       color="coral"
-      arc={arc}
       lineWidth={lineWidth}
       opacity={opacity}
     />
   );
 };
 
-export default Equator;
+export default latitudeLine;

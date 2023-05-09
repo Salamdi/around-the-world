@@ -1,59 +1,97 @@
 import React, { MutableRefObject, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import NasaGLBEarth from './assets/models/Earth_1_12756.glb';
-import { CameraControls, OrbitControls, Stars } from '@react-three/drei';
+import { CameraControls, Line, OrbitControls, Stars } from '@react-three/drei';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Group, MathUtils, DirectionalLight, OrthographicCamera } from 'three';
+import {
+  Group,
+  MathUtils,
+  DirectionalLight,
+  OrthographicCamera,
+  Vector3,
+  BufferGeometry,
+} from 'three';
 import { button, buttonGroup, useControls } from 'leva';
-import Globe, { SLOW_FACTOR } from './Globe';
+import Globe from './Globe';
+import State, { Step } from './state';
+import AppCameraControls from './AppCameraControls';
+import AppLights from './AppLight';
 import Equator from './Equator';
+import EquatorRadius from './EquatorRadius';
+import LatitudeLine from './LatitudeLine';
+import Circle from './Circle';
+import VerticalLine from './VerticalLine';
+import LatitudeRadius from './LatitudeRadius';
+
+const start = new Vector3(0, 0, 0);
+const end = new Vector3(2.5, 0, 0);
+const geometry = new BufferGeometry().setFromPoints([start, end]);
 
 const App = () => {
-    const cameraControlsRef = useRef<CameraControls>() as MutableRefObject<CameraControls>;
-    const lightRef = useRef() as MutableRefObject<DirectionalLight>;
-    const { spin, drawEquator } = useControls('Spin Globe', { spin: true, drawEquator: false });
-    const [visible, setVisible] = useState(true);
-    useFrame((_, delta) => {
-        if (!spin) {
-            cameraControlsRef.current.azimuthAngle -= delta / SLOW_FACTOR;
-            lightRef.current.rotation.y -= delta / SLOW_FACTOR;
-            cameraControlsRef.current.getPosition(lightRef.current.position);
-        }
-    });
-    const res = useControls({
-        thetaGroup: buttonGroup({
-            label: 'rotate y',
-            opts: {
-                '90°': () => cameraControlsRef.current.rotate(Math.PI / 2, 0, true),
-            }
-        }),
-        phiGroup: buttonGroup({
-            label: 'show equator',
-            opts: {
-                '+90°': () => {
-                    cameraControlsRef.current.rotate(0, Math.PI / 2, true);
-                    setVisible(false);
-                },
-                '-90°': () => {
-                    cameraControlsRef.current.rotate(0, - Math.PI / 2, true);
-                    setVisible(true);
-                },
-            },
-        }),
-    });
+  const [step, setStep] = useState<Step>('dayNight');
+  useControls({
+    dayNight: button(() => setStep('dayNight')),
+    day: button(() => setStep('day')),
+    equatorLine: button(() => setStep('equatorLine')),
+    speedCalculation: button(() => setStep('speedCalculation')),
+    latitude: button(() => setStep('latitude')),
+    latitudeLength: button(() => setStep('latitudeLength')),
+    halfSpeed: button(() => setStep('halfSpeed')),
+  });
 
-    return (
-        <>
-            <CameraControls
-                ref={cameraControlsRef}
-            />
-            <color attach="background" args={['#15151a']} />
-            <directionalLight position={[20, 0, 0]} intensity={3} ref={lightRef} />
-                <Globe spin={spin} visible={visible} />
-                <Equator draw={drawEquator} />
-            <Stars />
-        </>
-    );
+  window['setStep'] = setStep;
+
+  const latitudeLineVisible =
+    step === 'latitude' || step === 'latitudeLength' || step === 'halfSpeed';
+
+  return (
+    <State.Provider value={step}>
+      <AppCameraControls />
+      <color attach="background" args={['#15151a']} />
+      <AppLights />
+      <group scale={[0.6, 0.6, 0.6]}>
+        <Globe />
+        <Equator />
+        {latitudeLineVisible ? <LatitudeLine /> : null}
+        {step !== 'halfSpeed' && step !== 'day' ? <EquatorRadius /> : null}
+        {step === 'latitudeLength' ? (
+          <EquatorRadius zRotation={Math.PI / 3} />
+        ) : null}
+        {step === 'latitudeLength' ? <VerticalLine /> : null}
+        {latitudeLineVisible ? <LatitudeRadius /> : null}
+        {step === 'latitudeLength'
+          ? new Array(33)
+              .fill(0)
+              .map((_, i) => (((i - 16) / 16) * Math.PI) / 2)
+              .filter((latitude) => latitude !== 0)
+              .map((latitude) => (
+                <Circle
+                  lineWidth={0.3}
+                  opacity={0.5}
+                  radius={Math.cos(latitude) * 2.5}
+                  position={[0, Math.sin(latitude) * 2.5, 0]}
+                  key={latitude}
+                />
+              ))
+          : null}
+        {step === 'latitudeLength'
+          ? new Array(24)
+              .fill(0)
+              .map((_, i) => (Math.PI / 12) * i)
+              .map((zRotation) => (
+                <Circle
+                  lineWidth={0.3}
+                  opacity={0.5}
+                  radius={2.5}
+                  rotation={[Math.PI / 2, 0, zRotation]}
+                  key={zRotation}
+                />
+              ))
+          : null}
+        <Stars />
+      </group>
+    </State.Provider>
+  );
 };
 
 export default App;
