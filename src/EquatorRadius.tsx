@@ -1,14 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React from 'react';
 import { Line } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
-import state from './state';
 
 interface EquatorRadiusProps {
   zRotation?: number;
 }
 
 const EquatorRadius = ({ zRotation = 0 }: EquatorRadiusProps) => {
-  const step = useContext(state);
   const x = 2.5;
 
   return (

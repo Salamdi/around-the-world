@@ -16,12 +16,13 @@ const Equator = () => {
         if (arc >= 2 * Math.PI) {
           return;
         }
-        setArc(arc + delta);
+        setArc(arc + delta * 2);
         break;
       case 'halfSpeed':
       case 'latitude':
       case 'latitudeLength':
       case 'speedCalculation':
+      case 'init':
         break;
       default:
         const _impossible: never = step;

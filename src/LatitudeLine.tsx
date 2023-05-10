@@ -24,6 +24,7 @@ const latitudeLine = () => {
         break;
       case 'halfSpeed':
       case 'latitudeLength':
+      case 'init':
         break;
       default:
         const _impossible: never = step;

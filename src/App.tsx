@@ -13,7 +13,7 @@ import {
 } from 'three';
 import { button, buttonGroup, useControls } from 'leva';
 import Globe from './Globe';
-import State, { Step } from './state';
+import State, { Step, stepEndTime } from './state';
 import AppCameraControls from './AppCameraControls';
 import AppLights from './AppLight';
 import Equator from './Equator';
@@ -23,20 +23,61 @@ import Circle from './Circle';
 import VerticalLine from './VerticalLine';
 import LatitudeRadius from './LatitudeRadius';
 
-const start = new Vector3(0, 0, 0);
-const end = new Vector3(2.5, 0, 0);
-const geometry = new BufferGeometry().setFromPoints([start, end]);
+let start = 0;
 
 const App = () => {
-  const [step, setStep] = useState<Step>('dayNight');
+  const [step, setStep] = useState<Step>('init');
   useControls({
-    dayNight: button(() => setStep('dayNight')),
-    day: button(() => setStep('day')),
-    equatorLine: button(() => setStep('equatorLine')),
-    speedCalculation: button(() => setStep('speedCalculation')),
-    latitude: button(() => setStep('latitude')),
-    latitudeLength: button(() => setStep('latitudeLength')),
-    halfSpeed: button(() => setStep('halfSpeed')),
+    start: button(() => {
+      setStep('dayNight');
+    }),
+  });
+
+  useFrame(({ clock }) => {
+    if (step === 'init') {
+      start = clock.getElapsedTime();
+      return;
+    }
+    const time = (clock.getElapsedTime() - start) * 1000;
+    if (time >= (stepEndTime.get('halfSpeed') as number)) {
+      setStep('dayNight');
+    }
+    if (
+      time >= (stepEndTime.get('latitudeLength') as number) &&
+      time < (stepEndTime.get('halfSpeed') as number)
+    ) {
+      setStep('halfSpeed');
+    }
+    if (
+      time >= (stepEndTime.get('latitude') as number) &&
+      time < (stepEndTime.get('latitudeLength') as number)
+    ) {
+      setStep('latitudeLength');
+    }
+    if (
+      time >= (stepEndTime.get('speedCalculation') as number) &&
+      time < (stepEndTime.get('latitude') as number)
+    ) {
+      setStep('latitude');
+    }
+    if (
+      time >= (stepEndTime.get('equatorLine') as number) &&
+      time < (stepEndTime.get('speedCalculation') as number)
+    ) {
+      setStep('speedCalculation');
+    }
+    if (
+      time >= (stepEndTime.get('day') as number) &&
+      time < (stepEndTime.get('equatorLine') as number)
+    ) {
+      setStep('equatorLine');
+    }
+    if (
+      time >= (stepEndTime.get('dayNight') as number) &&
+      time < (stepEndTime.get('day') as number)
+    ) {
+      setStep('day');
+    }
   });
 
   window['setStep'] = setStep;

@@ -12,15 +12,16 @@ const AppCameraControls = () => {
       ref.current?.rotateAzimuthTo(0, true);
     case 'latitudeLength':
     case 'equatorLine':
+    case 'init':
       break;
     case 'day':
-      ref.current.rotate(Math.PI / 2, 0, true);
+      ref.current.rotateAzimuthTo(Math.PI / 2, true);
       break;
     case 'speedCalculation':
       ref.current.rotate(0, -Math.PI / 2, true);
       break;
     case 'latitude':
-      ref.current.rotate(0, Math.PI / 3, true);
+      ref.current.rotatePolarTo(Math.PI / 3, true);
       break;
     case 'halfSpeed':
       ref.current.rotatePolarTo(-Math.PI, true);
@@ -36,9 +37,10 @@ const AppCameraControls = () => {
       case 'day':
         break;
       case 'equatorLine':
-        ref.current.azimuthAngle -= delta;
+        ref.current.azimuthAngle -= delta * 2;
         break;
       case 'speedCalculation':
+      case 'init':
       case 'halfSpeed':
       case 'latitude':
       case 'latitudeLength':

@@ -18,7 +18,7 @@ const AppLights = () => {
       case 'day':
         break;
       case 'equatorLine':
-        setAzimuth(azimuth + delta);
+        setAzimuth(azimuth + delta * 2);
         const x = Math.cos(azimuth) * lightDistance;
         const z = Math.sin(azimuth) * lightDistance;
         ref.current.position.setX(x);
@@ -29,6 +29,7 @@ const AppLights = () => {
       case 'latitude':
       case 'latitudeLength':
       case 'speedCalculation':
+      case 'init':
         break;
       default:
         const _impossible: never = step;

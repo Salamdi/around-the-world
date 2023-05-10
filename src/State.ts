@@ -1,6 +1,7 @@
 import { createContext } from 'react';
 
 export type Step =
+    | 'init'
     | 'dayNight'
     | 'day'
     | 'equatorLine'
@@ -9,14 +10,15 @@ export type Step =
     | 'latitudeLength'
     | 'halfSpeed';
 
-export const stepDuration: Map<Step, number> = new Map([
-    ['dayNight', 4000],
-    ['day', 5000],
-    ['equatorLine', 5000],
-    ['speedCalculation', 8000],
-    ['latitude', 5000],
-    ['latitudeLength', 8000],
-    ['halfSpeed', 8000],
+export const stepEndTime: Map<Step, number> = new Map([
+    ['init', Infinity],
+    ['dayNight', 2200],
+    ['day', 2500],
+    ['equatorLine', 6500],
+    ['speedCalculation', 13500],
+    ['latitude', 28000],
+    ['latitudeLength', 32000],
+    ['halfSpeed', 37000],
 ]);
 
-export default createContext<Step>('dayNight');
+export default createContext<Step>('init');
