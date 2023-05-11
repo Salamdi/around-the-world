@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import Circle from './Circle';
-import state from './state';
+import state from './State';
 import { useFrame } from '@react-three/fiber';
 
 const Equator = () => {
@@ -11,6 +11,11 @@ const Equator = () => {
     switch (step) {
       case 'dayNight':
       case 'day':
+      case 'halfSpeed':
+      case 'latitude':
+      case 'latitudeLength':
+      case 'speedCalculation':
+      case 'init':
         break;
       case 'equatorLine':
         if (arc >= 2 * Math.PI) {
@@ -18,15 +23,10 @@ const Equator = () => {
         }
         setArc(arc + delta * 2);
         break;
-      case 'halfSpeed':
-      case 'latitude':
-      case 'latitudeLength':
-      case 'speedCalculation':
-      case 'init':
-        break;
-      default:
+      default: {
         const _impossible: never = step;
         return _impossible;
+      }
     }
   });
 

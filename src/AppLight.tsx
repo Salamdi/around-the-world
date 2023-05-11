@@ -1,5 +1,5 @@
 import React, { MutableRefObject, useContext, useRef, useState } from 'react';
-import state from './state';
+import state from './State';
 import { useFrame } from '@react-three/fiber';
 import { DirectionalLight, Vector3 } from 'three';
 
@@ -14,10 +14,14 @@ const AppLights = () => {
   useFrame((_, delta) => {
     switch (step) {
       case 'dayNight':
-        break;
+      case 'halfSpeed':
+      case 'latitude':
+      case 'latitudeLength':
+      case 'speedCalculation':
+      case 'init':
       case 'day':
         break;
-      case 'equatorLine':
+      case 'equatorLine': {
         setAzimuth(azimuth + delta * 2);
         const x = Math.cos(azimuth) * lightDistance;
         const z = Math.sin(azimuth) * lightDistance;
@@ -25,15 +29,11 @@ const AppLights = () => {
         ref.current.position.setZ(z);
         ref.current.lookAt(origin);
         break;
-      case 'halfSpeed':
-      case 'latitude':
-      case 'latitudeLength':
-      case 'speedCalculation':
-      case 'init':
-        break;
-      default:
+      }
+      default: {
         const _impossible: never = step;
         return _impossible;
+      }
     }
   });
 

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import Circle from './Circle';
 import { useFrame } from '@react-three/fiber';
-import state from './state';
+import state from './State';
 
 const latitudeLine = () => {
   const step = useContext(state);
@@ -14,6 +14,9 @@ const latitudeLine = () => {
       case 'day':
       case 'equatorLine':
       case 'speedCalculation':
+      case 'halfSpeed':
+      case 'latitudeLength':
+      case 'init':
         break;
       case 'latitude':
         if (radius <= 1.255) {
@@ -22,13 +25,10 @@ const latitudeLine = () => {
         setRadius(radius - delta);
         setY(Math.sqrt(2.51 ** 2 - radius ** 2));
         break;
-      case 'halfSpeed':
-      case 'latitudeLength':
-      case 'init':
-        break;
-      default:
+      default: {
         const _impossible: never = step;
         return _impossible;
+      }
     }
   });
 

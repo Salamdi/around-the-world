@@ -1,8 +1,5 @@
-import React, { MutableRefObject, Ref, useRef, useState } from 'react';
-import { button, useControls } from 'leva';
-import { useFrame } from '@react-three/fiber';
-import { Mesh, AnimationClip, NumberKeyframeTrack, TorusGeometry } from 'three';
-import { Line, useAnimations } from '@react-three/drei';
+import React from 'react';
+import { Line } from '@react-three/drei';
 
 interface CircleProps {
   arc?: number;

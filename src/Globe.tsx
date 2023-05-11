@@ -1,16 +1,8 @@
-import React, {
-  MutableRefObject,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useContext, useState } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
-import { useControls } from 'leva';
-import { Clock, Group, Vector3 } from 'three';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import NasaGLBEarth from './assets/models/Earth_1_12756.glb';
-import State from './state';
+import State from './State';
 
 const Globe = () => {
   const gltf = useLoader(GLTFLoader, NasaGLBEarth);
@@ -21,18 +13,19 @@ const Globe = () => {
     switch (step) {
       case 'day':
       case 'dayNight':
+      case 'latitude':
         setRotation(yRotation + delta * 2);
         break;
+      case 'init':
       case 'equatorLine':
       case 'halfSpeed':
-      case 'latitude':
       case 'latitudeLength':
       case 'speedCalculation':
-      case 'init':
         break;
-      default:
+      default: {
         const _impossible: never = step;
         return _impossible;
+      }
     }
   });
 

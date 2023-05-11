@@ -1,6 +1,6 @@
 import React, { MutableRefObject, useContext, useRef } from 'react';
 import { CameraControls } from '@react-three/drei';
-import state from './state';
+import state from './State';
 import { useFrame } from '@react-three/fiber';
 
 const AppCameraControls = () => {
@@ -10,6 +10,7 @@ const AppCameraControls = () => {
     case 'dayNight':
       ref.current?.rotatePolarTo(Math.PI / 2, true);
       ref.current?.rotateAzimuthTo(0, true);
+      break;
     case 'latitudeLength':
     case 'equatorLine':
     case 'init':
@@ -26,28 +27,28 @@ const AppCameraControls = () => {
     case 'halfSpeed':
       ref.current.rotatePolarTo(-Math.PI, true);
       break;
-    default:
+    default: {
       const _impossible: never = step;
       return _impossible;
+    }
   }
   useFrame((_, delta) => {
     switch (step) {
       case 'dayNight':
-        break;
-      case 'day':
-        break;
-      case 'equatorLine':
-        ref.current.azimuthAngle -= delta * 2;
-        break;
       case 'speedCalculation':
+      case 'day':
       case 'init':
       case 'halfSpeed':
       case 'latitude':
       case 'latitudeLength':
         break;
-      default:
+      case 'equatorLine':
+        ref.current.azimuthAngle -= delta * 2;
+        break;
+      default: {
         const _impossible: never = step;
         return _impossible;
+      }
     }
   });
 
