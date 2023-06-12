@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Stars } from '@react-three/drei';
+import { Stars, Text } from '@react-three/drei';
 import { button, useControls } from 'leva';
 import Globe from './Globe';
 import State, { Step, stepEndTime } from './State';
@@ -72,25 +72,28 @@ const App = () => {
 
   const latitudeLineVisible =
     step === 'latitude' || step === 'latitudeLength' || step === 'halfSpeed';
-
   return (
     <State.Provider value={step}>
       <AppCameraControls />
       <color attach="background" args={['#15151a']} />
       <AppLights />
       <group scale={[0.6, 0.6, 0.6]}>
-        <Globe />
+        <Suspense fallback={<Text>Loading...</Text>}>
+          <Globe />
+        </Suspense>
         <Equator />
         {latitudeLineVisible ? <LatitudeLine /> : null}
-        {step !== 'halfSpeed' && step !== 'day' ? <EquatorRadius /> : null}
+        {step === 'speedCalculation' || step === 'latitudeLength' ? (
+          <EquatorRadius />
+        ) : null}
         {step === 'latitudeLength' ? (
           <EquatorRadius zRotation={Math.PI / 3} />
         ) : null}
         {step === 'latitudeLength' ? <VerticalLine /> : null}
-        {step === 'latitudeLength' || step === 'halfSpeed' ? <LatitudeRadius /> : null}
-        {step === 'latitudeLength'
-          ? <GlobeWireFrame />
-          : null}
+        {step === 'latitudeLength' || step === 'halfSpeed' ? (
+          <LatitudeRadius />
+        ) : null}
+        {step === 'latitudeLength' ? <GlobeWireFrame /> : null}
         <Stars />
       </group>
     </State.Provider>
