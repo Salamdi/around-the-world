@@ -78,7 +78,7 @@ const App = () => {
       <color attach="background" args={['#15151a']} />
       <AppLights />
       <group scale={[0.6, 0.6, 0.6]}>
-        <Suspense fallback={<Text>Loading the models...</Text>}>
+        <Suspense fallback={<Text scale={.5}>Loading the models...</Text>}>
           <Globe />
         </Suspense>
         <Equator />
